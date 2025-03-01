@@ -77,7 +77,7 @@ export default function Home() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    let newErrors: { [key: string]: string } = {};
+    const newErrors: { [key: string]: string } = {};
 
     if (!formData.amount) newErrors.amount = "Amount is required";
     else if (Number(formData.amount) <= 0)
