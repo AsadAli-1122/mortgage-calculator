@@ -1,101 +1,229 @@
-import Image from "next/image";
+"use client";
+
+import ButtonSubmit from "@/components/ButtonSubmit";
+import CompleteResult from "@/components/CompleteResult";
+import EmptyResult from "@/components/EmptyResult";
+import InputField from "@/components/InputField";
+import Link from "next/link";
+import React, { useState } from "react";
+
+const CURRENCY_SYMBOL = "\u00A3";
+
+interface FormDataProps {
+  amount: string | number;
+  term: string | number;
+  rate: string | number;
+  type: "repayment" | "interestOnly" | "";
+}
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [formData, setFormData] = useState<FormDataProps>({
+    amount: "",
+    term: "",
+    rate: "",
+    type: "",
+  });
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+  const [error, setError] = useState<{ [key: string]: string }>({});
+
+  const [result, setResult] = useState<{ monthly: number; total: number }>({
+    monthly: 0,
+    total: 0,
+  });
+
+  const calculateResult = () => {
+    const { amount, term, rate, type } = formData;
+    const principal = Number(amount);
+    const years = Number(term);
+    const interestRate = Number(rate) / 100;
+
+    let monthlyPayment = 0;
+    let totalPayment = 0;
+
+    if (type === "repayment") {
+      const monthlyRate = interestRate / 12;
+      const months = years * 12;
+      if (monthlyRate > 0) {
+        monthlyPayment =
+          (principal * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -months));
+      } else {
+        monthlyPayment = principal / months;
+      }
+      totalPayment = monthlyPayment * months;
+    } else if (type === "interestOnly") {
+      monthlyPayment = (principal * interestRate) / 12;
+      totalPayment = monthlyPayment * years * 12;
+    }
+
+    setResult({
+      monthly: parseFloat(monthlyPayment.toFixed(2)),
+      total: parseFloat(totalPayment.toFixed(2)),
+    });
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError((prev) => ({ ...prev, [e.target.id]: "" }));
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError((prev) => ({ ...prev, type: "" }));
+    setFormData((prev) => ({
+      ...prev,
+      type: e.target.value as "repayment" | "interestOnly",
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    let newErrors: { [key: string]: string } = {};
+
+    if (!formData.amount) newErrors.amount = "Amount is required";
+    else if (Number(formData.amount) <= 0)
+      newErrors.amount = "Amount must be greater than 0";
+
+    if (!formData.term) newErrors.term = "Term is required";
+    else if (Number(formData.term) < 1)
+      newErrors.term = "Term must be at least 1 year";
+
+    if (!formData.rate) newErrors.rate = "Interest rate is required";
+    else if (Number(formData.rate) <= 0)
+      newErrors.rate = "Interest rate must be greater than 0";
+
+    if (!formData.type) newErrors.type = "Please select a mortgage type";
+
+    setError(newErrors);
+
+    if (Object.keys(newErrors).length === 0) {
+      calculateResult();
+    }
+  };
+
+  return (
+    <>
+      <div className="bg-white shadow-lg rounded-2xl md:rounded-3xl grid md:grid-cols-2 max-w-4xl w-full overflow-hidden">
+        <div className="px-6 md:px-12 py-12">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h2 className="capitalize text-lg font-semibold">
+                Mortgage Calculator
+              </h2>
+              <button
+                className="capitalize text-sm font-semibold border-b-2 rounded-xs cursor-pointer text-slate-600/50 hover:text-slate-600 ease-in-out duration-300"
+                type="reset"
+                onClick={() => (setFormData({ amount: "", term: "", rate: "", type: "" }), setError({}))}
+              >
+                Clear All
+              </button>
+            </div>
+
+            <InputField
+              label="Mortgage Amount"
+              id="amount"
+              type="number"
+              value={formData.amount}
+              onChange={handleChange}
+              placeholder="360,000"
+              symbol="£"
+              symbolPosition="left"
+              error={error.amount}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+
+            <div className="grid grid-cols-2 gap-4">
+              <InputField
+                label="Mortgage Term"
+                id="term"
+                type="number"
+                value={formData.term}
+                onChange={handleChange}
+                placeholder="5"
+                symbol="years"
+                symbolPosition="right"
+                error={error.term}
+              />
+              <InputField
+                label="Interest Rate"
+                id="rate"
+                type="number"
+                value={formData.rate}
+                onChange={handleChange}
+                placeholder="3.5"
+                symbol="%"
+                symbolPosition="right"
+                error={error.rate}
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-700">Mortgage Type</label>
+              <div className="flex flex-col space-y-2 mt-2">
+                {["repayment", "interestOnly"].map((type) => (
+                  <label
+                    key={type}
+                    className={`flex items-center font-semibold border-2 px-4 py-2 rounded-sm cursor-pointer ${
+                      formData.type === type
+                        ? "bg-[#d7da2f]/20 border-[#d7da2f] text-[#3F4A30]"
+                        : "text-slate-400 border-slate-400/30"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="type"
+                      value={type}
+                      checked={formData.type === type}
+                      onChange={handleRadioChange}
+                      className="hidden peer"
+                    />
+                    <div
+                      className={`w-4 h-4 rounded-full border-2 flex justify-center items-center mr-2 ${
+                        formData.type === type
+                          ? "bg-[#d7da2f]/20 border-[#d7da2f]"
+                          : "bg-slate-400/20 border-slate-400/40"
+                      }`}
+                    >
+                      <div
+                        className={`w-2 h-2 rounded-full ${
+                          formData.type === type
+                            ? "bg-[#d7da2f]"
+                            : "bg-slate-400/20"
+                        }`}
+                      />
+                    </div>
+                    {type === "repayment" ? "Repayment" : "Interest Only"}
+                  </label>
+                ))}
+              </div>
+              {error.type && (
+                <p className="text-red-500 text-sm mt-1">{error.type}</p>
+              )}
+            </div>
+
+            <ButtonSubmit title={formData.type === "interestOnly" ? "Calculate Interest" : "Calculate Repayments"} />
+          </form>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
+
+        <div className="bg-[var(--teal-blue)] text-white px-6 md:px-12 py-12 md:rounded-bl-[70px]">
+          {result.monthly > 0 ? (
+            <CompleteResult
+              monthly={result.monthly}
+              total={result.total}
+              symbol={CURRENCY_SYMBOL}
+              type={formData.type}
+            />
+          ) : (
+            <EmptyResult />
+          )}
+        </div>
+      </div>
+
+      <div className="attribution mt-8">
+        Challenge by{" "}
+        <a href="https://www.frontendmentor.io?ref=challenge">
+          Frontend Mentor
         </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+        . Coded by <Link href="https://codebyasad.vercel.app/">Asad Ali</Link>.
+      </div>
+    </>
   );
 }

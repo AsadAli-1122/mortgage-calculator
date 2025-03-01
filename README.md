@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Frontend Mentor - Mortgage Repayment Calculator Solution
 
-## Getting Started
+This is a solution to the [Mortgage Repayment Calculator Challenge on Frontend Mentor](https://www.frontendmentor.io/challenges/mortgage-repayment-calculator-Galx1LXK73). This challenge helped improve my skills in building interactive UI components with validation and calculations.
 
-First, run the development server:
+## Table of Contents
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- [Overview](#overview)
+  - [The Challenge](#the-challenge)
+  - [Live Demo](#live-demo)
+- [My Process](#my-process)
+  - [Built With](#built-with)
+  - [Key Features](#key-features)
+  - [Challenges & Learnings](#challenges--learnings)
+- [Author](#author)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Overview
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### The Challenge
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Users can:
 
-## Learn More
+- Input mortgage details and calculate monthly and total repayments.
+- See real-time validation messages for incorrect inputs.
+- Use only the keyboard to complete the form.
+- Experience a responsive and accessible layout for all screen sizes.
+- View interactive states for buttons and form elements.
 
-To learn more about Next.js, take a look at the following resources:
+### Live Demo
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Solution URL:** [GitHub Repository](https://github.com/AsadAli-1122/mortgage-calculator)
+- **Live Site URL:** [Live Demo](https://mortgage-calculator.vercel.app)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## My Process
 
-## Deploy on Vercel
+### Built With
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Next.js** – React Framework for SSR & performance optimization
+- **TypeScript** – Strongly typed JavaScript for better scalability
+- **Tailwind CSS** – Utility-first styling for a sleek UI
+- **React Hooks** – `useState` for state management
+- **Form Validation** – Custom error handling for user input
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Key Features
+
+- **Dynamic Mortgage Calculation:**
+  - Repayment or interest-only mortgage options.
+  - Monthly and total repayment calculations.
+- **Validation & Error Handling:**
+  - Ensures valid inputs for amount, term, and interest rate.
+- **Global Symbols Handling:**
+  - Currency and percentage symbols defined globally for consistency.
+- **Responsive & Accessible UI:**
+  - Optimized for different screen sizes and keyboard navigation.
+
+### Challenges & Learnings
+
+- Implemented controlled components for better state handling.
+- Learned how to create dynamic form validations.
+- Improved UI consistency with Tailwind CSS custom styling.
+
+## Author
+
+- **Website:** [codebyasad.vercel.app](https://codebyasad.vercel.app)
+- **GitHub:** [AsadAli-1122](https://github.com/AsadAli-1122)
+- **Frontend Mentor:** [@AsadAli-1122](https://www.frontendmentor.io/profile/AsadAli-1122)
+
