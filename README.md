@@ -2,7 +2,7 @@
 
 This is a solution to the [Mortgage Repayment Calculator Challenge on Frontend Mentor](https://www.frontendmentor.io/challenges/mortgage-repayment-calculator-Galx1LXK73). This challenge helped improve my skills in building interactive UI components with validation and calculations.
 
-- [Mortgage Repayment Calculator](public/images/mortgage-repayment-calculator.png)
+![Mortgage Repayment Calculator](public/images/mortgage-repayment-calculator.png)
 
 ## Table of Contents
 
